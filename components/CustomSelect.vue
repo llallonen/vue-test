@@ -3,7 +3,7 @@
     :class="[
       'select relative w-full text-left outline-none rounded-md mt-2 ',
       `select--${kind}`,
-      `select--${optType}`,
+      `bg-${optType}`,
     ]"
     :tabindex="tabindex"
     @blur="open = false"
@@ -20,13 +20,15 @@
       :class="{ selectHide: !open }"
     >
       <div
-        class="pointer py-3 pl-2"
+        :class="['pointer py-3 pl-2',
+      `bg-${optType === 'default' ? option.type : option.type}`,
+    ]"
         v-for="(option, i) of options"
         :key="i"
         @click="
           selected = option.name;
           open = false;
-          $emit('input', option.name);
+          $emit(`update:${kind}`, option.name);
           optType = option.type;
         "
       >
@@ -81,30 +83,6 @@ export default {
   padding-left: 1em;
   cursor: pointer;
   user-select: none;
-}
-.select--call,
-.select--type .items div:nth-of-type(1) {
-  background-color: #457272;
-}
-.select--callRequest,
-.select--type .items div:nth-of-type(2) {
-  background-color: #ca893a;
-}
-.select--calcRequest,
-.select--type .items div:nth-of-type(3) {
-  background-color: #85506d;
-}
-.select--direct,
-.select--source .items div:nth-of-type(1) {
-  background-color: #4c4572;
-}
-.select--seo,
-.select--source .items div:nth-child(2) {
-  background-color: #ca3a6a;
-}
-.select--avito,
-.select--source .items div:nth-child(3) {
-  background-color: #508564;
 }
 .selectHide {
   display: none;
