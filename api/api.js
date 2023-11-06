@@ -6,7 +6,8 @@ export async function getContacts() {
 }
 
 export async function getContact(id) {
-  const { data, isFetching, error } = await useFetch(`${url}/${id}`);
+  const { data } = await useFetch(`${url}/${id}`);
+  return data;
 }
 
 export async function createContact(contact) {
