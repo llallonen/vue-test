@@ -1,23 +1,14 @@
 <script setup>
-import { getContacts } from '~/api/api';
-
-const url = "https://api.sunset-sellers.com/contact";
-
-// const { data, isFetching, error } = await useFetch(url);
-// const contacts = data._rawValue;
+import { getContacts } from "~/api/api";
 
 const contacts = ref([]);
 
-onBeforeMount(async () => {
-  const { data, isFetching, error } = await useFetch(url);
-  const contactsData = await getContacts();
-  contacts.value = contactsData
-  console.log( contactsData)
+onBeforeMount(() => {
+  const contactsData = getContacts().then((data) => (contacts.value = data));
+  contacts.value = contactsData;
+  console.log(contactsData);
 });
 
-onUpdated(() => {
-  console.log(contacts);
-});
 </script>
 
 <template>
@@ -28,18 +19,8 @@ onUpdated(() => {
       </h1>
       <NewContactForm />
       <div class="flex items-center">
-        <div v-if="error" class="text-2xl text-error mx-auto">
-          Ошибка: запрос контактов не удался
-        </div>
-        <div v-else-if="isFetching" class="text-2xl text-accent">
-          Загрузка...
-        </div>
         <ul class="grid grid-cols-1 lg:grid-cols-2 gap-4 w-full">
-          <div
-            v-if="contacts"
-            v-for="contact in contacts"
-            :key="contact"
-          >
+          <div v-if="contacts" v-for="contact in contacts" :key="contact">
             <Contact :contact="contact" />
           </div>
         </ul>

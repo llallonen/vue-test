@@ -32,10 +32,10 @@ const sourceMap = [
       <h3 class="text-md text-primary">{{ contact?.data.phone }}</h3>
     </div>
     <div class="w-5/12 text-lg">
-      <div :class="[`text-${typeMap[contact.data.type].type}`]">
+      <div ref="type" :class="[`${typeMap[contact.data.type].type}`]">
         {{ typeMap[contact.data.type].name }}
       </div>
-      <div :class="[`text-${sourceMap[contact.data.source].type}`]">
+      <div ref="source" :class="[`${sourceMap[contact.data.source].type}`]">
         {{ sourceMap[contact.data.source].name }}
       </div>
     </div>

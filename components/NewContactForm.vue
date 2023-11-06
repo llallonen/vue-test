@@ -23,7 +23,6 @@ const sourceDefault = {
   type: "Выберите происхождение контакта",
 };
 
-let startValidation = false;
 const name = ref("");
 const phone = ref("");
 const source = ref("");
@@ -31,7 +30,6 @@ const type = ref("");
 
 async function submitForm() {
   let contactData: ContactData;
-  startValidation = true;
   const validation = validateForm();
 
   if (validation) {
@@ -46,12 +44,12 @@ async function submitForm() {
 }
 
 const isNameValid = () => {
-  return startValidation ? name.value.length >= 1 : null;
+  return name.value.length >= 1;
 };
 
 const isPhoneValid = () => {
   const regex = /^[7][9][0-9]{9}/i;
-  return startValidation ? regex.test(phone.value) : null;
+  return regex.test(phone.value);
 };
 
 const getTypeIdx = () => {
@@ -72,7 +70,6 @@ const validateForm = () => {
   getSourceIdx() != -1 ? (isSourceValid = true) : isSourceValid;
   return isNameValid() && isPhoneValid() && isTypeValid && isSourceValid;
 };
-
 </script>
 
 <template>
@@ -92,7 +89,9 @@ const validateForm = () => {
             class="bg-base-200 text-white w-full rounded-md px-3 py-2 mt-2"
             :class="{ invalidInput: !isNameValid }"
           />
-          <p class="invalid">Имя должно содержать хотя бы 1 символ</p>
+          <p v-if="{ isNameValid }" class="invalid">
+            Имя должно содержать хотя бы 1 символ
+          </p>
         </label>
         <label class="mb-4 text-left text-accent">
           Номер телефона
@@ -104,7 +103,9 @@ const validateForm = () => {
             :class="{ invalidInput: !isPhoneValid }"
             class="bg-base-200 text-white w-full rounded-md px-3 py-2 mt-2"
           />
-          <p class="invalid">Номер должен быть введен в формате 79XXXXXXXXX</p>
+          <p v-if="{}" class="invalid">
+            Номер должен быть введен в формате 79XXXXXXXXX
+          </p>
         </label>
         <CustomSelect
           :kind="'type'"

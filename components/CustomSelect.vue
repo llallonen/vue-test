@@ -2,7 +2,7 @@
   <div
     :class="[
       'select relative w-full text-left outline-none rounded-md mt-2 ',
-      `select--${kind}`,
+      `select-${kind}`,
       `bg-${optType}`,
     ]"
     :tabindex="tabindex"
@@ -20,9 +20,10 @@
       :class="{ selectHide: !open }"
     >
       <div
-        :class="['pointer py-3 pl-2',
-      `bg-${optType === 'default' ? option.type : option.type}`,
-    ]"
+        :class="[
+          'pointer py-3 pl-2',
+          `bg-${optType === 'default' ? option.type : option.type}`,
+        ]"
         v-for="(option, i) of options"
         :key="i"
         @click="
@@ -77,7 +78,6 @@ export default {
 </script>
 
 <style scoped>
-
 .select .items div {
   color: #fff;
   padding-left: 1em;
@@ -86,5 +86,29 @@ export default {
 }
 .selectHide {
   display: none;
+}
+.select-call,
+.select-type .items div:nth-of-type(1) {
+  background-color: #457272;
+}
+.select-callRequest,
+.select-type .items div:nth-of-type(2) {
+  background-color: #ca893a;
+}
+.select-calcRequest,
+.select-type .items div:nth-of-type(3) {
+  background-color: #85506d;
+}
+.select-direct,
+.select-source .items div:nth-of-type(1) {
+  background-color: #4c4572;
+}
+.select-seo,
+.select-source .items div:nth-child(2) {
+  background-color: #ca3a6a;
+}
+.select-avito,
+.select-source .items div:nth-child(3) {
+  background-color: #508564;
 }
 </style>
