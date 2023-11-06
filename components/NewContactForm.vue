@@ -1,28 +1,7 @@
 <script lang="ts" setup>
-import { ref, computed } from "vue";
-
-const startValidation = ref(false);
-const name = ref("");
-const phone = ref("");
-
-async function submitForm() {
-  startValidation.value = true;
-  console.log(name.value);
-  console.log(phone.value);
-}
-
-const isNameValid = computed(() => {
-  return startValidation.value ? name.value.length >= 1 : null;
-});
-
-const isPhoneValid = computed(() => {
-  const regex = /^[7][9][0-9]{9}/i;
-  return startValidation.value ? regex.test(phone.value) : null;
-});
-
-const checkName = () => {
-  return isNameValid;
-};
+import { ref } from "vue";
+import { createContact } from "~/api/api";
+import type { ContactData } from "~/interfaces";
 
 const typeSelectOptions = [
   { type: "call", name: "Звонок" },
@@ -43,6 +22,57 @@ const sourceSelectOptions = [
 const sourceDefault = {
   type: "Выберите происхождение контакта",
 };
+
+let startValidation = false;
+const name = ref("");
+const phone = ref("");
+const source = ref("");
+const type = ref("");
+
+async function submitForm() {
+  let contactData: ContactData;
+  startValidation = true;
+  const validation = validateForm();
+
+  if (validation) {
+    contactData = {
+      name: name.value,
+      phone: phone.value,
+      source: getSourceIdx(),
+      type: getTypeIdx(),
+    };
+    createContact(contactData);
+  }
+}
+
+const isNameValid = () => {
+  return startValidation ? name.value.length >= 1 : null;
+};
+
+const isPhoneValid = () => {
+  const regex = /^[7][9][0-9]{9}/i;
+  return startValidation ? regex.test(phone.value) : null;
+};
+
+const getTypeIdx = () => {
+  const types = typeSelectOptions.map((element) => element.name);
+  return types.indexOf(type.value);
+};
+
+const getSourceIdx = () => {
+  const sources = sourceSelectOptions.map((element) => element.name);
+  return sources.indexOf(source.value);
+};
+
+let isTypeValid = false;
+let isSourceValid = false;
+
+const validateForm = () => {
+  getTypeIdx() != -1 ? (isTypeValid = true) : isTypeValid;
+  getSourceIdx() != -1 ? (isSourceValid = true) : isSourceValid;
+  return isNameValid() && isPhoneValid() && isTypeValid && isSourceValid;
+};
+
 </script>
 
 <template>
@@ -59,13 +89,10 @@ const sourceDefault = {
             type="text"
             required
             placeholder="Введите имя"
-            @input="checkName"
             class="bg-base-200 text-white w-full rounded-md px-3 py-2 mt-2"
             :class="{ invalidInput: !isNameValid }"
           />
-          <p v-if="{ checkName }" class="invalid">
-            Имя должно содержать хотя бы 1 символ
-          </p>
+          <p class="invalid">Имя должно содержать хотя бы 1 символ</p>
         </label>
         <label class="mb-4 text-left text-accent">
           Номер телефона
@@ -79,8 +106,20 @@ const sourceDefault = {
           />
           <p class="invalid">Номер должен быть введен в формате 79XXXXXXXXX</p>
         </label>
-        <CustomSelect :kind="'type'" :options="typeSelectOptions" :default="typeDefault.type" />
-        <CustomSelect :kind="'source'" :options="sourceSelectOptions" :default="sourceDefault.type" />
+        <CustomSelect
+          :kind="'type'"
+          :options="typeSelectOptions"
+          :default="typeDefault.type"
+          @update:type="(newValue) => (type = newValue)"
+          :type="type"
+        />
+        <CustomSelect
+          :kind="'source'"
+          :options="sourceSelectOptions"
+          :default="sourceDefault.type"
+          :source="source"
+          @update:source="(newValue) => (source = newValue)"
+        />
         <button
           type="submit"
           class="bg-primary text-white transition-all duration-100 hover:bg-success rounded-md px-6 py-2 mt-4"
@@ -101,7 +140,6 @@ const sourceDefault = {
 .invalidInput {
   border: 1px solid red;
 }
-
 .valid {
   display: none;
 }
